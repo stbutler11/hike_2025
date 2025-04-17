@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camino del Norte 2025</title>
+    <link rel="stylesheet" href="node_modules/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="node_modules/reveal.js/dist/theme/white.css">
+    <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css">
+    <style>
+        .map { height: 500px; }
+        .highlight { color: #2a76dd; }
+        .stats { font-size: 1.5em; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section>
+                <h1>Camino del Norte 2025</h1>
+                <h3>A 4-Day Journey Through Northern Spain</h3>
+                <p>September 19-22, 2025</p>
+            </section>
+
+            <!-- Day 1 -->
+            <section>
+                <section>
+                    <h2>Day 1: Friday, September 19</h2>
+                    <ul>
+                        <li>✈️ Dublin → Santander (FR7152)</li>
+                        <li>🕐 05:50 → 08:55</li>
+                        <li>🚕 Taxi to Llanes</li>
+                        <li>🚶‍♂️ Walk 23km to Colombres</li>
+                    </ul>
+                </section>
+                <section>
+                    <h3>Day 1 Route: Llanes to Colombres</h3>
+                    <div id="day1-map" class="map"></div>
+                </section>
+            </section>
+
+            <!-- Day 2 -->
+            <section>
+                <section>
+                    <h2>Day 2: Saturday, September 20</h2>
+                    <ul>
+                        <li>🚶‍♂️ Colombres → Comillas</li>
+                        <li>📏 Distance: 28km</li>
+                    </ul>
+                </section>
+                <section>
+                    <h3>Day 2 Route: Colombres to Comillas</h3>
+                    <div id="day2-map" class="map"></div>
+                </section>
+            </section>
+
+            <!-- Day 3 -->
+            <section>
+                <section>
+                    <h2>Day 3: Sunday, September 21</h2>
+                    <ul>
+                        <li>🚶‍♂️ Comillas → Santillana Del Mar (22km)</li>
+                        <li>🚶‍♂️ Extra 10km to train station</li>
+                        <li>🚂 Train to Santander</li>
+                    </ul>
+                </section>
+                <section>
+                    <h3>Day 3 Route: Comillas to Santillana Del Mar</h3>
+                    <div id="day3-map" class="map"></div>
+                </section>
+            </section>
+
+            <!-- Day 4 -->
+            <section>
+                <h2>Day 4: Monday, September 22</h2>
+                <ul>
+                    <li>✈️ Santander → Dublin (FR7153)</li>
+                    <li>🕐 16:30 → 17:30</li>
+                </ul>
+            </section>
+
+            <!-- Statistics -->
+            <section>
+                <h2>Journey Statistics</h2>
+                <div class="stats">
+                    <p>🚶‍♂️ Total Walking: 83km</p>
+                    <p>📅 Duration: 4 days</p>
+                    <p>🌍 Region: Cantabria, Spain</p>
+                </div>
+            </section>
+
+             <!-- Overview Map -->
+             <section>
+                <h2>The Route</h2>
+                <div id="overview-map" class="map"></div>
+                <p>Total Distance: ~83km walking</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="node_modules/reveal.js/dist/reveal.js"></script>
+    <script src="node_modules/leaflet/dist/leaflet.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true
+        });
+
+        // Wait for Reveal.js to be ready
+        Reveal.addEventListener('ready', function() {
+            // Initialize maps after small delay to ensure proper rendering
+            setTimeout(function() {
+                // Overview map
+                const overviewMap = L.map('overview-map').setView([43.3872, -4.2388], 9);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(overviewMap);
+
+                // Add markers for main locations
+                const locations = [
+                    [43.4198, -4.7527, 'Llanes'],
+                    [43.3872, -4.6388, 'Colombres'],
+                    [43.3927, -4.2933, 'Comillas'],
+                    [43.3890, -4.1082, 'Santillana del Mar'],
+                    [43.4623, -3.8099, 'Santander']
+                ];
+
+                // Create a path connecting all points
+                const pathPoints = locations.map(loc => [loc[0], loc[1]]);
+                L.polyline(pathPoints, {color: 'red', weight: 3}).addTo(overviewMap);
+
+                // Add markers
+                locations.forEach(loc => {
+                    L.marker([loc[0], loc[1]])
+                        .bindPopup(loc[2])
+                        .addTo(overviewMap);
+                });
+
+                // Individual day maps
+                const day1Map = L.map('day1-map').setView([43.4035, -4.6958], 10);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(day1Map);
+                L.polyline([[43.4198, -4.7527], [43.3872, -4.6388]], {color: 'red'}).addTo(day1Map);
+
+                const day2Map = L.map('day2-map').setView([43.3900, -4.4661], 10);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(day2Map);
+                L.polyline([[43.3872, -4.6388], [43.3927, -4.2933]], {color: 'red'}).addTo(day2Map);
+
+                const day3Map = L.map('day3-map').setView([43.3909, -4.2008], 10);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(day3Map);
+                L.polyline([[43.3927, -4.2933], [43.3890, -4.1082]], {color: 'red'}).addTo(day3Map);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
