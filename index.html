@@ -6,7 +6,6 @@
     <title>Camino del Norte 2025</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/theme/white.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
     <style>
         .map { height: 500px; }
         .highlight { color: #2a76dd; }
@@ -22,6 +21,7 @@
             margin: 20px 0;
         }
     </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDB1EFTun0NN6Sg9rQvyU3pDHlcCuTLcco"></script>
 </head>
 <body>
     <div class="reveal">
@@ -133,7 +133,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
     <script>
         Reveal.initialize({
             hash: true,
@@ -145,49 +144,79 @@
             // Initialize maps after small delay to ensure proper rendering
             setTimeout(function() {
                 // Overview map
-                const overviewMap = L.map('overview-map').setView([43.3872, -4.2388], 9);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors'
-                }).addTo(overviewMap);
+                const overviewMap = new google.maps.Map(document.getElementById('overview-map'), {
+                    center: {lat: 43.3872, lng: -4.2388},
+                    zoom: 9
+                });
 
                 // Add markers for main locations
                 const locations = [
-                    [43.4198, -4.7527, 'Llanes'],
-                    [43.3872, -4.6388, 'Colombres'],
-                    [43.3927, -4.2933, 'Comillas'],
-                    [43.3890, -4.1082, 'Santillana del Mar'],
-                    [43.4623, -3.8099, 'Santander']
+                    {lat: 43.4198, lng: -4.7527, name: 'Llanes'},
+                    {lat: 43.3872, lng: -4.6388, name: 'Colombres'},
+                    {lat: 43.3927, lng: -4.2933, name: 'Comillas'},
+                    {lat: 43.3890, lng: -4.1082, name: 'Santillana del Mar'},
+                    {lat: 43.4623, lng: -3.8099, name: 'Santander'}
                 ];
 
                 // Create a path connecting all points
-                const pathPoints = locations.map(loc => [loc[0], loc[1]]);
-                L.polyline(pathPoints, {color: 'red', weight: 3}).addTo(overviewMap);
+                const pathPoints = locations.map(loc => ({lat: loc.lat, lng: loc.lng}));
+                const path = new google.maps.Polyline({
+                    path: pathPoints,
+                    geodesic: true,
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2
+                });
+                path.setMap(overviewMap);
 
                 // Add markers
                 locations.forEach(loc => {
-                    L.marker([loc[0], loc[1]])
-                        .bindPopup(loc[2])
-                        .addTo(overviewMap);
+                    const marker = new google.maps.Marker({
+                        position: {lat: loc.lat, lng: loc.lng},
+                        map: overviewMap,
+                        title: loc.name
+                    });
                 });
 
                 // Individual day maps
-                const day1Map = L.map('day1-map').setView([43.4035, -4.6958], 10);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors'
-                }).addTo(day1Map);
-                L.polyline([[43.4198, -4.7527], [43.3872, -4.6388]], {color: 'red'}).addTo(day1Map);
+                const day1Map = new google.maps.Map(document.getElementById('day1-map'), {
+                    center: {lat: 43.4035, lng: -4.6958},
+                    zoom: 10
+                });
+                const day1Path = new google.maps.Polyline({
+                    path: [{lat: 43.4198, lng: -4.7527}, {lat: 43.3872, lng: -4.6388}],
+                    geodesic: true,
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2
+                });
+                day1Path.setMap(day1Map);
 
-                const day2Map = L.map('day2-map').setView([43.3900, -4.4661], 10);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors'
-                }).addTo(day2Map);
-                L.polyline([[43.3872, -4.6388], [43.3927, -4.2933]], {color: 'red'}).addTo(day2Map);
+                const day2Map = new google.maps.Map(document.getElementById('day2-map'), {
+                    center: {lat: 43.3900, lng: -4.4661},
+                    zoom: 10
+                });
+                const day2Path = new google.maps.Polyline({
+                    path: [{lat: 43.3872, lng: -4.6388}, {lat: 43.3927, lng: -4.2933}],
+                    geodesic: true,
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2
+                });
+                day2Path.setMap(day2Map);
 
-                const day3Map = L.map('day3-map').setView([43.3909, -4.2008], 10);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors'
-                }).addTo(day3Map);
-                L.polyline([[43.3927, -4.2933], [43.3890, -4.1082]], {color: 'red'}).addTo(day3Map);
+                const day3Map = new google.maps.Map(document.getElementById('day3-map'), {
+                    center: {lat: 43.3909, lng: -4.2008},
+                    zoom: 10
+                });
+                const day3Path = new google.maps.Polyline({
+                    path: [{lat: 43.3927, lng: -4.2933}, {lat: 43.3890, lng: -4.1082}],
+                    geodesic: true,
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2
+                });
+                day3Path.setMap(day3Map);
             }, 1000);
         });
     </script>
